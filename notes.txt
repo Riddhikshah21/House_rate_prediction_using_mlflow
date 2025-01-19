@@ -1,0 +1,53 @@
+Machine Learning is everywhere
+MLflow solves certain challenges that MLOps aims to address.
+
+Problem 1: Some challenges of ML engineers: 
+	- Reproducibility 
+	- Traceability
+	- Notes and spreadsheets are not scalable 
+	
+Solution 1: MLflow tracking: 
+	- Stores data for all experiments
+	- User interface
+	- Programmatic querying 
+
+Problem 2: After your model is trained:
+	- Training and evaluation -> Model -> production env (batch predictions or real-time predictions) (batch predictions : airline engine model wants to update new prices twice a day on the website or real-time predictions: fraud detection of a transaction)
+	- Once we decide our model - we need to handover model to software engineers with extensive explanations about what is required and they add additional layers of code. So, we have MLFlow models to take care of it.
+
+Solution 2: MLflow models:
+	- Format for packing models
+	- Running predictions against existing dataset
+	- Real-time serving 
+
+Problem 3: Even after model is ready to put into production there are several challenges such as:
+	- Model discovery - which model version is latest, which model is ready to put in production for business use
+	- Model metadata management 
+	- Traditionally requires explicit communications
+	- Human error likely to happen
+
+Solution 3: MLfLow registry: tagged, uploaded and discovered by others. 
+	- Centralized model catalogue 
+	- Models can be used/deployed directly from the registry
+	- Can be used as a base for building automated tools
+
+MLflow projects: another Mlflow component.
+
+Experimenting with Mlflow: 
+	- to keep track of various runs we can perform and save the results for each run 
+	- Load data -> preprocess data -> training the model -> evaluating the model 
+	- You want to try different solutions to get satisfactory results, can lead to multiple iterations.
+
+Experiment: table
+Training execution (run): row in a table. 
+Parameters: different items that when changes will affect the result of model.
+Metrics: to determine model's performance. 
+
+Mlflow UI - to visualize Mlflow experiments, metrics, parameters, models, etc. 
+
+Artifacts: aside from parameters and metrics, we need to store files such as data that is transformed, model that can be a viable option in future, plots, etc.
+When preparing for demo/presentations - need to manually maintain a directory structure that can be matched to experiments and runs. Everyone needs to adhere to the convention. 
+Mlflow takes care of experiments and runs, it becomes easier to store files which saves a lot of time. Artifacts are files associated with runs. 
+
+	- Exporting an artifact: stores the file in a temporary location on disk.
+	- Log (export) it using Mlflow api and attach to the run
