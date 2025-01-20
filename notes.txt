@@ -33,7 +33,9 @@ Solution 3: MLfLow registry: tagged, uploaded and discovered by others.
 
 MLflow projects: another Mlflow component.
 
-Experimenting with Mlflow: 
+######################################################################################################################################
+
+**Experimenting with Mlflow:**
 	- to keep track of various runs we can perform and save the results for each run 
 	- Load data -> preprocess data -> training the model -> evaluating the model 
 	- You want to try different solutions to get satisfactory results, can lead to multiple iterations.
@@ -51,3 +53,66 @@ Mlflow takes care of experiments and runs, it becomes easier to store files whic
 
 	- Exporting an artifact: stores the file in a temporary location on disk.
 	- Log (export) it using Mlflow api and attach to the run
+
+log_artifact will create a single artifact for the model but cannot visualize it 
+log_artifacts can be used to save artifact for model, dataset and visualize data plots. 
+
+######################################################################################################################################
+
+**Collaborative scenario:**
+
+Mlruns stores locally all the artifacts, metrics and parameters and start UI locally. But when you expand the team, you want to share results with each other.
+
+Mlruns -> experiment id -> run id -> 1. artifacts 2. metrics 3. parameters.
+For storing files in artifacts makes sense but maintaining two different files for metrics and parameters can be problematic when searching leading to slowness issues. 
+	- Not scale well 
+	- Bad when using shared network file system
+	- Not great for single user with a substantial number of experiments. 
+	
+Adding storage location which can be shared network file system. 
+	1. In python code add tracking url:
+	Mlflow.set_tracking_url("file_path")
+	2. Starting the UI:
+	Mlflow ui --backend-store-url file_path 
+	- Artifacts has folders with files but metrics and parameters are also stored for each run using its different id, but managing and searching in a lot of files can be problematic. 
+	- Solution: use SQLite to store metrics and parameters value can help query in the db. It is a relational database 
+
+After Using SQLite:
+	- Artifact store: Artifacts are same as before
+	- Backend store: Everything else in single sqlite file: mlruns.db
+
+Using sqlite backend store: 
+	1. In python code add tracking url:
+	Mlflow.set_tracking_url("file_path_to_mlruns.db")
+	2. Starting the UI:
+	Mlflow ui --backend-store-url sqlite://file_path_to_mlruns.db
+	
+Shortcomings of using this approach:
+	- SQLite will slow down if data increases.
+	- Every user needs to have artifacts folder mounted on the same path 
+	- Every user needs to run their own mlflow server
+	
+Solution :Complete MLflow deployment architecture.
+	- Dedicated database - Replace backend store with a proper database like postgresql
+	- Customized artifact store - some artifact store options are amazon s3, google cloud storage, azure blob storage
+	- Separate server - replace the mlflow server with some company net name. 
+
+
+######################################################################################################################################
+
+**Mlflow models: Packaging and running models**
+	1. Logging a model: supported flavor: eg. Scikit-learn -> mlflow.sklearn.log_model(trained_model, "model")
+		○ Sklearn flavor:
+		○ Logs a model in mlflow with python env, conda env, yml meta data file, pickle file of model, requiments.txt for tracking dependencies, etc. 
+		○ It provides code for validation and prediction to be used for that model. 
+	2. Customized model
+		a. For logging model with customized preprocessing or any other steps to follow before predicting using the model trained on different data. 
+		b. For flavor outside of mlflow: for custom model that cannot be used in sklearn flavor. 
+			i. Pyfunc flavor
+To create model with sklearn flavor by creating CustomModel class and adding methods such as predict, load_context that adds artifact of model into a dictionary that can be stored as sklearn flavor 
+
+
+
+
+
+######################################################################################################################################
